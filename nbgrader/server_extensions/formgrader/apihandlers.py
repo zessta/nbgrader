@@ -1,11 +1,12 @@
 import json
 import os
-
+from nbgrader.utils import get_username
 from tornado import web
-
+import psycopg2
+from pathlib import Path
 from .base import BaseApiHandler, check_xsrf, check_notebook_dir
 from ...api import MissingEntry
-
+import datetime
 
 class StatusHandler(BaseApiHandler):
     @web.authenticated
@@ -292,9 +293,52 @@ class ReleaseAllFeedbackHandler(BaseApiHandler):
     @check_xsrf
     @check_notebook_dir
     def post(self, assignment_id):
-        self.write(json.dumps(self.api.release_feedback(assignment_id)))
 
+#       Custom code to push the grades to grading_data table in Hub database
 
+        release_feedback_api_response=self.api.release_feedback(assignment_id)
+        success=release_feedback_api_response['success']
+        trainer_username=get_username()
+        if(success):
+            self.write(json.dumps(release_feedback_api_response))
+            with self.gradebook as gb:
+                grades = []
+                # Loop over each assignment in the database
+                for assignment in gb.assignments:
+                    if assignment_id==assignment.name:
+                        # Loop over each student in the database
+                        for student in gb.students:
+                            # Create a dictionary that will store information about this student's
+                            # submitted assignment
+                            score = {}
+                            score['Course_Name'] = assignment.course_id
+                            score['Trainer'] =  trainer_username
+                            score['Learner'] = student.id
+                            score['Assignment'] = assignment.name
+                            score['Max_Score'] = assignment.max_score
+                            score['Date_Time'] = datetime.datetime.now()
+                            # Try to find the submission in the database. If it doesn't exist, the
+                            # `MissingEntry` exception will be raised, which means the student
+                            # didn't submit anything, so we assign them a score of zero.
+                            try:
+                                submission = gb.find_submission(assignment.name, student.id)
+                            except MissingEntry:
+                                score['Score'] = 0.0
+                            else:
+                                score['Score'] = submission.score
+                            grades.append(score)
+#                 connect to hub database and push the data to grading_data table
+                connection = psycopg2.connect(database="jupyterhub", user="admin", password="hub@123", host="postgresql-dev.jhub.svc.cluster.local", port=5432)
+                cur = connection.cursor()
+                cur.executemany(""" INSERT INTO 
+  grading_data(trainer_username,course_name,assignment_name,learner_username,assignment_max_score,learner_score,released_time_stamp)
+                                      VALUES
+                                      (%(Trainer)s,%(Course_Name)s,%(Assignment)s,%(Learner)s,%(Max_Score)s, %(Score)s, %(Date_Time)s) """, grades)
+                connection.commit()
+                cur.close()
+        else:
+            self.write(json.dumps(release_feedback_api_response))
+            
 class GenerateFeedbackHandler(BaseApiHandler):
     @web.authenticated
     @check_xsrf
@@ -302,18 +346,135 @@ class GenerateFeedbackHandler(BaseApiHandler):
     def post(self, assignment_id, student_id):
         self.write(json.dumps(self.api.generate_feedback(assignment_id, student_id)))
 
-
 class ReleaseFeedbackHandler(BaseApiHandler):
     @web.authenticated
     @check_xsrf
     @check_notebook_dir
     def post(self, assignment_id, student_id):
-        self.write(json.dumps(self.api.release_feedback(assignment_id, student_id)))
+#         self.write(json.dumps(self.api.release_feedback(assignment_id, student_id)))
 
+#         Custom code to push the grades to grading_data table in Hub database
+
+        release_feedback_api_response=self.api.release_feedback(assignment_id, student_id)
+        success=release_feedback_api_response['success']
+        trainer_username=get_username()
+        if(success):
+            self.write(json.dumps(release_feedback_api_response))
+            with self.gradebook as gb:
+                grades = []
+                # Loop over each assignment in the database
+                for assignment in gb.assignments:
+                    if assignment_id==assignment.name:
+                        # Loop over each student in the database and check for the atching student id:
+                        for student in gb.students:
+                            if student.id == student_id:
+                            # Create a dictionary that will store information about this student's
+                            # submitted assignment
+                                score = {}
+                                score['Course_Name'] = assignment.course_id
+                                score['Trainer'] =  trainer_username
+                                score['Learner'] = student.id
+                                score['Assignment'] = assignment.name
+                                score['Max_Score'] = assignment.max_score
+                                score['Date_Time'] = datetime.datetime.now()
+                                # Try to find the submission in the database. If it doesn't exist, the
+                                # `MissingEntry` exception will be raised, which means the student
+                                # didn't submit anything, so we assign them a score of zero.
+                                try:
+                                    submission = gb.find_submission(assignment.name, student.id)
+                                except MissingEntry:
+                                    score['Score'] = 0.0
+                                else:
+                                    score['Score'] = submission.score
+                                grades.append(score)
+                # connect to hub database and push the data to grading_data table
+                connection = psycopg2.connect(database="jupyterhub", user="admin", password="hub@123", host="postgresql-dev.jhub.svc.cluster.local", port=5432)
+                cur = connection.cursor()
+                cur.executemany(""" INSERT INTO 
+  grading_data(trainer_username,course_name,assignment_name,learner_username,assignment_max_score,learner_score,released_time_stamp)
+                                      VALUES
+                                      (%(Trainer)s,%(Course_Name)s,%(Assignment)s,%(Learner)s,%(Max_Score)s, %(Score)s, %(Date_Time)s) """, grades)
+                connection.commit()
+                cur.close()  
+        else:
+            self.write(json.dumps(release_feedback_api_response))
+            
+            
+# Custom API Handlers
+
+# API Handler for switching course for an instructor in Manage Assignments Tab.            
+class ChangeCourseHandler(BaseApiHandler):
+    @web.authenticated
+    @check_xsrf
+    def get(self,courseName):
+        try:
+            isCourseDirectory=Path("/home/jovyan/"+courseName).is_dir()
+            if not isCourseDirectory:
+                path = os.path.join("/home/jovyan", courseName)
+                os.mkdir(path)
+            configFile=Path("/home/jovyan/nbgrader_config.py")
+            if not configFile.is_file():
+                configFile=open("/home/jovyan/nbgrader_config.py", "x")
+            else:
+                configFile=open("/home/jovyan/nbgrader_config.py",'w')
+            configFile.write("c = get_config()")
+            configFile.write("\n")
+            configFile.write("c.CourseDirectory.root = '/home/jovyan/"+courseName+"'")
+            configFile.write("\n")
+            configFile.write("c.CourseDirectory.course_id='"+courseName+"'")
+            configFile.close()
+            userName=get_username()
+            hubHeaders={
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                'Authorization': 'token 1199d73de2bc4d37900e19c6539833e4'
+                }
+            self.write(json.dumps({'success':True,'userName':userName,'course':courseName}))
+        except:
+            self.write(json.dumps({'success':False})) 
+            
+# Custom API Handler for exporting grading data to a CSV for a particular course assignments submissions.  
+class CustomExportHandler(BaseApiHandler):
+    @web.authenticated
+    @check_xsrf
+    def get(self):
+        try:
+            with self.gradebook as gb:
+                grades = []
+
+                # Loop over each assignment in the database
+                for assignment in gb.assignments:
+
+                    # Loop over each student in the database
+                    for student in gb.students:
+
+                    # Create a dictionary that will store information about this student's
+                    # submitted assignment
+                        score = {}
+                        score['Learner'] = student.id
+                        score['Assignment'] = assignment.name
+                        score['Max_Score'] = assignment.max_score
+                        score['Course_Name']=assignment.course_id
+
+                    # Try to find the submission in the database. If it doesn't exist, the
+                    # `MissingEntry` exception will be raised, which means the student
+                    # didn't submit anything, so we assign them a score of zero.
+                        try:
+                            submission = gb.find_submission(assignment.name, student.id)
+                        except MissingEntry:
+                            score['Score'] = 0.0
+                        else:
+                            score['Score'] = submission.score
+
+                        grades.append(score)
+                self.write(json.dumps(grades))
+        except:
+            pass
 
 default_handlers = [
     (r"/formgrader/api/status", StatusHandler),
-
+    (r"/formgrader/api/customexport",CustomExportHandler),
+    (r"/formgrader/api/changecourse/([^/]+)",ChangeCourseHandler),
     (r"/formgrader/api/assignments", AssignmentCollectionHandler),
     (r"/formgrader/api/assignment/([^/]+)", AssignmentHandler),
     (r"/formgrader/api/assignment/([^/]+)/assign", AssignHandler),
