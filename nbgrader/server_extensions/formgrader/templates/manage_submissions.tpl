@@ -39,7 +39,7 @@
 </ol>
 {%- endblock -%}
 
-<!-- {%- block messages -%}
+{%- block messages -%}
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="headingOne">
@@ -66,7 +66,7 @@ nbgrader autograde "{{ assignment_id }}"</pre>
     </div>
   </div>
 </div>
-{%- endblock -%} -->
+{%- endblock -%}
 
 {%- block table_header -%}
 <tr>
