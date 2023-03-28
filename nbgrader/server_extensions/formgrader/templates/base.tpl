@@ -1,7 +1,7 @@
 <!doctype html>
+
 <head>
-    <title>nbgrader formgrade</title>
-    
+    <title>Ds lab</title>
     <script src="{{ base_url }}/formgrader/static/components/jquery/jquery.min.js"></script>
     <script src="{{ base_url }}/formgrader/static/components/underscore/underscore-min.js"></script>
     <script src="{{ base_url }}/formgrader/static/components/backbone/backbone-min.js"></script>
@@ -28,10 +28,6 @@
             width: 100px;
         }
 
-        .col-md-2 {
-            width: 12%;
-        }
-
        .col-md-2.sidenav {
             border-radius: 1.5rem !important;
             background: #006BB6;
@@ -48,11 +44,14 @@
 
         .page-header {
             padding-left: calc(2vw - 2rem);
+            padding-bottom: 0px;
+            margin: 40px 0px;
+            border-width:0px;
         }
 
         .title-header{
-            padding-left: calc(5vw - 2rem);
             margin: 40px 0 20px;
+            margin-left: -1vw;
             display: flex;
             align-items: center
         }
@@ -101,7 +100,6 @@
         }
 
       .career-logo {
-            width: calc(10vw - 2rem);
             height: 5rem;
         }
 
@@ -131,7 +129,7 @@
 
         th,
         td {
-            padding-left: 2rem !important;
+            padding-left: 1rem !important;
             padding-right: 2rem !important;
             text-align: center;
         }
@@ -153,7 +151,6 @@
 			width: 11%;
 		}
 		.career-logo {
-		    width: calc(11vw - 2rem);
 		    height: 7rem;
 		}
 		
@@ -175,7 +172,6 @@
     width: 14%;
 }
 .career-logo {
-    width: calc(10vw - 2rem);
     height: 5rem;
 }
 }
