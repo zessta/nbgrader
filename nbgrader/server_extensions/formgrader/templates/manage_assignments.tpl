@@ -72,6 +72,9 @@
 		border-radius: 1px;
 	}
 
+	a{
+		color:#5FBEF0;
+	}
 	.page-header>h1 {
 		display: flex;
 		flex-direction: row;
@@ -750,7 +753,7 @@ Manage Students</a></li>
 <script>
 	const hub_url = window.location.href.split('user')[0];
 	const ngshare_url = hub_url + 'services/ngshare/';
-
+	let switchCourseNameAdd = 'Course name';
 	window.onload = function () {
 		const loadCourses = async () => {
 			const response = await fetch(`${ngshare_url}/courses`);
@@ -779,7 +782,7 @@ Manage Students</a></li>
 	$('#switchCourseCancel').click(() => $('#switchCourseModal').hide());
 
 	$('#switchCourseChange').on('click', () => {
-		const selectedCourse = $('#selectedListSelect').text();
+		const selectedCourse = switchCourseNameAdd;
 		if (selectedCourse == 'Course name') {
 			$('#selectInput').css({ 'border': '0.1vw solid red' });
 		}
@@ -805,8 +808,11 @@ Manage Students</a></li>
 	});
 
 	$("#selectInput").on("click", "div li", function () {
-		console.log('entered');
+		switchCourseNameAdd = $(this).attr('id');
 		var selectedText = $(this).attr('id');
+		if(selectedText.length > 19){
+			selectedText = selectedText.slice(0,19);
+		}
 		$("#selectedListSelect").text(selectedText);
 		$("#selectedListSelect").removeClass('placeholder-div');
 		console.log('selectText', selectedText);
