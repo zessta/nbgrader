@@ -146,6 +146,21 @@ nbgrader autograde "{{ assignment_id }}"</pre>
 </div>
 {%- endblock -%}
 
+{%- block sidebar -%}
+<li role="presentation" class="active"><a href="{{ base_url }}/formgrader/manage_assignments">Assignments</a></li>
+<li role="presentation"><a href="{{ base_url }}/formgrader/gradebook">Manual Grading</a></li>
+{%- endblock -%}
+
+{%- block breadcrumbs -%}
+<ol class="breadcrumb">
+  <li><a href="{{ base_url }}/formgrader/manage_assignments">Assignments</a></li>
+  <li class="active">{{ assignment_id }}</li>
+</ol>
+{%- endblock -%}
+
+{%- block messages -%}
+{%- endblock -%}
+
 {%- block table_header -%}
 <tr>
   <th>Student Name</th>
