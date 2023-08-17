@@ -328,7 +328,7 @@ class ReleaseAllFeedbackHandler(BaseApiHandler):
                                 score['Score'] = submission.score
                             grades.append(score)
 #                 connect to hub database and push the data to grading_data table
-                connection = psycopg2.connect(database="jupyterhub", user="admin", password="hub@123", host="postgresql-dev.jhub.svc.cluster.local", port=5432)
+                connection = psycopg2.connect(database="jupyterhub", user="admin", password="hub@123", host="postgresql-prod.jhub.svc.cluster.local", port=5432)
                 cur = connection.cursor()
                 cur.executemany(""" INSERT INTO 
   grading_data(trainer_username,course_name,assignment_name,learner_username,assignment_max_score,learner_score,released_time_stamp)
@@ -388,7 +388,7 @@ class ReleaseFeedbackHandler(BaseApiHandler):
                                     score['Score'] = submission.score
                                 grades.append(score)
                 # connect to hub database and push the data to grading_data table
-                connection = psycopg2.connect(database="jupyterhub", user="admin", password="hub@123", host="postgresql-dev.jhub.svc.cluster.local", port=5432)
+                connection = psycopg2.connect(database="jupyterhub", user="admin", password="hub@123", host="postgresql-prod.jhub.svc.cluster.local", port=5432)
                 cur = connection.cursor()
                 cur.executemany(""" INSERT INTO 
   grading_data(trainer_username,course_name,assignment_name,learner_username,assignment_max_score,learner_score,released_time_stamp)
