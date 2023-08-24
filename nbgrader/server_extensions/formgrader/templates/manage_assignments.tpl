@@ -466,7 +466,7 @@
 	}
 
 	.select-arrange {
-		background-image: url(https://datalab-static-images.s3.ap-south-1.amazonaws.com/admin_expand.png);
+		background-image: url(https://datalab-prod-static-images.s3.ap-south-1.amazonaws.com/admin_expand.png);
 		background-repeat: no-repeat;
 		background-position: 98%;
 		margin-bottom: -4.1rem;
@@ -480,7 +480,7 @@
 	}
 
 	.select-outer-icon{
-		background-image: url('https://datalab-static-images.s3.ap-south-1.amazonaws.com/dropdown_close.png');
+		background-image: url('https://datalab-prod-static-images.s3.ap-south-1.amazonaws.com/dropdown_close.png');
 	}
 
 	.options-list li:hover {
@@ -746,7 +746,7 @@ Manage Students</a></li>
 {%block foot%}
 
 <a href="#" onClick="createAssignmentModal();" class='add-assignment'> <button class="add-assign-btn"><span><img
-				class="plus-icon" src="https://datalab-static-images.s3.ap-south-1.amazonaws.com/add_assign.png" alt="plus">Add new
+				class="plus-icon" src="https://datalab-prod-static-images.s3.ap-south-1.amazonaws.com/add_assign.png" alt="plus">Add new
 			assignment</span></button></a>
 {%endblock%}
 {% block script%}
