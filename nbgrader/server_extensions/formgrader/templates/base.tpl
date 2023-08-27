@@ -14,7 +14,7 @@
     <link rel="stylesheet"
         href="{{ base_url }}/formgrader/static/components/datatables.net-bs/css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="{{ base_url }}/formgrader/static/css/nbgrader.css">
-    <link rel="icon" href="{{s3_bucket_url}}career_shaper_fav_icon.png" type="image/x-icon">
+    <link rel="icon" href="https://datalab-prod-static-images.s3.ap-south-1.amazonaws.com/career_shaper_fav_icon.png" type="image/x-icon">
     <script>
         var base_url = "{{ base_url }}";
     </script>
@@ -242,7 +242,7 @@
         <div class="row">
             <div class="col-md-2" '>
         <div class="page-header">
-        <img src="{{s3_bucket_url}}career_shaper_logo.png" class='
+        <img src="https://datalab-prod-static-images.s3.ap-south-1.amazonaws.com/career_shaper_logo.png" class='
                 career-logo' />
         </div>
     </div>

@@ -466,7 +466,7 @@
 	}
 
 	.select-arrange {
-		background-image: url({{s3_bucket_url}}admin_expand.png);
+		background-image: url({{}}admin_expand.png);
 		background-repeat: no-repeat;
 		background-position: 98%;
 		margin-bottom: -4.1rem;
@@ -480,7 +480,7 @@
 	}
 
 	.select-outer-icon{
-		background-image: url('{{s3_bucket_url}}dropdown_close.png');
+		background-image: url('https://datalab-prod-static-images.s3.ap-south-1.amazonaws.com/dropdown_close.png');
 	}
 
 	.options-list li:hover {
