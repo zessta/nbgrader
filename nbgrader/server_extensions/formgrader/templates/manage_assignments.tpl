@@ -746,7 +746,7 @@ Manage Students</a></li>
 {%block foot%}
 
 <a href="#" onClick="createAssignmentModal();" class='add-assignment'> <button class="add-assign-btn"><span><img
-				class="plus-icon" src="ttps://datalab-prod-static-images.s3.ap-south-1.amazonaws.com/add_assign.png" alt="plus">Add new
+				class="plus-icon" src="https://datalab-prod-static-images.s3.ap-south-1.amazonaws.com/add_assign.png" alt="plus">Add new
 			assignment</span></button></a>
 {%endblock%}
 {% block script%}
