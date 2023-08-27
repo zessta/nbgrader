@@ -466,7 +466,7 @@
 	}
 
 	.select-arrange {
-		background-image: url({{}}admin_expand.png);
+		background-image: url(https://datalab-prod-static-images.s3.ap-south-1.amazonaws.com/admin_expand.png);
 		background-repeat: no-repeat;
 		background-position: 98%;
 		margin-bottom: -4.1rem;
